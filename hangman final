@@ -1,0 +1,135 @@
+import random
+
+# Functie om een willekeurig woord uit een lijst te kiezen
+def kies_woord():
+    woorden = [
+        "informatica", "informatiekunde", "spelletje", "aardigheidje",
+        "scholier", "fotografie", "waardebepaling", "specialiteit",
+        "verzekering", "universiteit", "heesterperk"
+    ]
+    # Kies een willekeurig woord en zet het om naar kleine letters
+    return random.choice(woorden).lower()
+
+# ASCII-art afbeeldingen voor de verschillende fases van het spel
+galgje_stappen = [
+    """
+     +---+
+     |   |
+         |
+         |
+         |
+         |
+    =========
+    """,
+    """
+     +---+
+     |   |
+     O   |
+         |
+         |
+         |
+    =========
+    """,
+    """
+     +---+
+     |   |
+     O   |
+     |   |
+         |
+         |
+    =========
+    """,
+    """
+     +---+
+     |   |
+     O   |
+    /|\\  |
+         |
+         |
+    =========
+    """,
+    """
+     +---+
+     |   |
+     O   |
+    /|\\  |
+    /    |
+         |
+    =========
+    """,
+    """
+     +---+
+     |   |
+     O   |
+    /|\\  |
+    / \\  |
+         |
+    =========
+    """
+]
+
+# Hoofdfunctie waarin het spel galgje wordt gespeeld
+def galgje():
+    # Kies een woord waar de speler letters van moet raden
+    woord = kies_woord()
+    # Sets om geraden letters en foute letters bij te houden
+    letters_geraden = set()
+    foute_letters = set()
+    # Teller voor het aantal foute pogingen
+    foute_pogingen = 0
+    max_pogingen = 5
+    # Alfabet om geldige invoer te controleren
+    alfabet = set("abcdefghijklmnopqrstuvwxyz")
+
+    print("Welkom bij Galgje!")
+
+    # Speel totdat max aantal foute pogingen is bereikt
+    while foute_pogingen < max_pogingen:
+        # Toon de huidige galgje-tekening op basis van foute pogingen
+        print(galgje_stappen[foute_pogingen])
+        # Toon de letters die fout zijn geraden, gesorteerd voor overzichtelijkheid
+        print("Fout geraden letters:", " ".join(sorted(foute_letters)))
+
+        # Toon het woord met geraden letters zichtbaar en overige als streepjes
+        huidig_woord = "".join([letter if letter in letters_geraden else "-" for letter in woord])
+        print("Woord: " + huidig_woord)
+
+        # Controleer of het woord volledig geraden is
+        if "-" not in huidig_woord:
+            print(f"Gefeliciteerd! Je hebt het woord '{woord}' geraden!")
+            return
+
+        # Vraag de speler om een letter te raden
+        gok = input("Raad een letter: ").lower()
+
+        # Controleer of de invoer geldig is: precies 1 letter uit het alfabet
+        if len(gok) == 1 and gok in alfabet:
+            # Controleer of de letter al is geprobeerd
+            if gok in letters_geraden or gok in foute_letters:
+                print("Je hebt deze letter al geprobeerd.")
+            # Als de letter in het woord voorkomt, voeg toe aan geraden letters
+            elif gok in woord:
+                letters_geraden.add(gok)
+                print(f"Goed zo! De letter '{gok}' komt voor in het woord.")
+            else:
+                # Foute gok, voeg toe aan foute letters en verhoog teller
+                foute_letters.add(gok)
+                foute_pogingen += 1
+                print(f"Helaas, de letter '{gok}' zit er niet in.")
+                print(f"Je hebt nog {max_pogingen - foute_pogingen} pogingen over.")
+        else:
+            # Ongeldige invoer (geen letter of meer dan 1 teken)
+            print("Ongeldige invoer. Voer één letter in.")
+
+    # Als de speler het woord niet heeft geraden binnen de pogingen, toon einde spel
+    print(galgje_stappen[foute_pogingen])
+    print("Fout geraden letters:", " ".join(sorted(foute_letters)))
+    print(f"Game over! Je hebt het woord niet geraden. Het woord was '{woord}'.")
+
+# Hoofdprogramma dat het spel meerdere keren kan laten spelen
+while True:
+    galgje()
+    opnieuw = input("Wil je nog een spel spelen? (ja/nee): ").strip().lower()
+    if opnieuw != "ja":
+        print("Bedankt voor het spelen! Tot de volgende keer.")
+        break
